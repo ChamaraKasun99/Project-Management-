@@ -1,0 +1,1900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Personal Work Management System</title>
+  <style>
+    :root {
+      --bg: #09111f;
+      --bg-2: #0d1730;
+      --panel: rgba(16, 24, 47, 0.88);
+      --panel-2: rgba(23, 34, 66, 0.96);
+      --line: rgba(255,255,255,0.08);
+      --line-2: rgba(255,255,255,0.12);
+      --text: #edf3ff;
+      --muted: #95a4c8;
+      --primary: #60a5fa;
+      --primary-2: #4f46e5;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --slate: #94a3b8;
+      --purple: #8b5cf6;
+      --cyan: #06b6d4;
+      --pink: #ec4899;
+      --shadow: 0 20px 60px rgba(0,0,0,0.28);
+      --radius: 22px;
+      --radius-sm: 14px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(96,165,250,0.18), transparent 30%),
+        radial-gradient(circle at top right, rgba(139,92,246,0.14), transparent 28%),
+        linear-gradient(135deg, var(--bg) 0%, var(--bg-2) 42%, #09111f 100%);
+      min-height: 100vh;
+    }
+
+    h1,h2,h3,h4,p { margin: 0; }
+    button,input,select,textarea { font: inherit; }
+
+    .app {
+      display: grid;
+      grid-template-columns: 290px 1fr;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      padding: 24px;
+      border-right: 1px solid var(--line);
+      background: rgba(8, 12, 24, 0.72);
+      backdrop-filter: blur(18px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 30px;
+    }
+
+    .brand-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, var(--primary), var(--purple));
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      box-shadow: var(--shadow);
+      letter-spacing: 0.04em;
+    }
+
+    .brand small {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .nav { display: grid; gap: 10px; }
+
+    .nav-btn {
+      width: 100%;
+      text-align: left;
+      background: transparent;
+      color: var(--text);
+      border: 1px solid transparent;
+      border-radius: 15px;
+      padding: 14px 16px;
+      cursor: pointer;
+      transition: 0.22s ease;
+      font-weight: 600;
+    }
+
+    .nav-btn:hover,
+    .nav-btn.active {
+      background: rgba(255,255,255,0.05);
+      border-color: var(--line-2);
+      transform: translateY(-1px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+    }
+
+    .sidebar-card {
+      margin-top: 24px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 18px;
+      background: linear-gradient(180deg, rgba(96,165,250,0.16), rgba(139,92,246,0.10));
+    }
+
+    .sidebar-card p {
+      color: var(--muted);
+      margin-top: 8px;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .main { padding: 24px; }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 22px;
+      flex-wrap: wrap;
+    }
+
+    .title-wrap p {
+      color: var(--muted);
+      margin-top: 8px;
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border: none;
+      cursor: pointer;
+      border-radius: 14px;
+      padding: 12px 16px;
+      font-weight: 700;
+      transition: 0.22s ease;
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+
+    .btn-primary {
+      color: white;
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      box-shadow: var(--shadow);
+    }
+
+    .btn-secondary {
+      color: var(--text);
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--line);
+    }
+
+    .page { display: none; }
+    .page.active { display: block; }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .grid-2-equal {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .card {
+      background: linear-gradient(180deg, var(--panel), var(--panel-2));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+
+    .card.soft {
+      background: linear-gradient(180deg, rgba(18,26,47,0.78), rgba(23,33,61,0.90));
+    }
+
+    .stat-card h3 {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 8px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .stat-value {
+      font-size: 30px;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+    }
+
+    .stat-hint {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 8px;
+      line-height: 1.5;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .section-header h2 { font-size: 19px; }
+    .section-header p {
+      color: var(--muted);
+      margin-top: 6px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .pill-toggle {
+      display: inline-flex;
+      gap: 8px;
+      padding: 6px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--line);
+    }
+
+    .pill-toggle button {
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      padding: 8px 12px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .pill-toggle button.active {
+      background: linear-gradient(135deg, rgba(96,165,250,0.18), rgba(139,92,246,0.16));
+      color: var(--text);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .form-group {
+      display: grid;
+      gap: 8px;
+    }
+
+    .form-group.full { grid-column: 1 / -1; }
+
+    label {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      border-radius: 14px;
+      padding: 12px 14px;
+      outline: none;
+      transition: 0.18s ease;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: rgba(96,165,250,0.4);
+      box-shadow: 0 0 0 4px rgba(96,165,250,0.08);
+    }
+
+    textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .toolbar .left, .toolbar .right {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 14px 10px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+      font-size: 14px;
+    }
+
+    th {
+      font-size: 12px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 800;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      border: 1px solid transparent;
+      white-space: nowrap;
+    }
+
+    .priority-high { background: rgba(239,68,68,0.13); color: #fda4af; border-color: rgba(239,68,68,0.22); }
+    .priority-medium { background: rgba(245,158,11,0.13); color: #fde68a; border-color: rgba(245,158,11,0.22); }
+    .priority-low { background: rgba(34,197,94,0.13); color: #86efac; border-color: rgba(34,197,94,0.22); }
+
+    .status-plan { background: rgba(96,165,250,0.13); color: #93c5fd; border-color: rgba(96,165,250,0.22); }
+    .status-ongoing { background: rgba(139,92,246,0.13); color: #c4b5fd; border-color: rgba(139,92,246,0.22); }
+    .status-cancel { background: rgba(148,163,184,0.13); color: #cbd5e1; border-color: rgba(148,163,184,0.22); }
+    .status-completed { background: rgba(34,197,94,0.13); color: #86efac; border-color: rgba(34,197,94,0.22); }
+
+    .chip-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .chip {
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.04);
+      font-size: 12px;
+      color: var(--text);
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .icon-btn {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      padding: 8px 10px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.18s ease;
+    }
+
+    .icon-btn:hover {
+      transform: translateY(-1px);
+      border-color: rgba(96,165,250,0.25);
+    }
+
+    .project-list, .task-stack, .done-stack {
+      display: grid;
+      gap: 14px;
+    }
+
+    .project-item {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(255,255,255,0.03);
+      padding: 16px;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .project-item:hover,
+    .project-item.active {
+      background: rgba(96,165,250,0.08);
+      border-color: rgba(96,165,250,0.24);
+      transform: translateY(-1px);
+    }
+
+    .project-meta {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .empty {
+      padding: 26px;
+      border-radius: 16px;
+      border: 1px dashed var(--line);
+      text-align: center;
+      color: var(--muted);
+      background: rgba(255,255,255,0.02);
+    }
+
+    .task-card, .done-card {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px;
+      background: rgba(255,255,255,0.03);
+    }
+
+    .done-card {
+      background: linear-gradient(180deg, rgba(34,197,94,0.08), rgba(255,255,255,0.02));
+      border-color: rgba(34,197,94,0.16);
+    }
+
+    .task-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .task-subtasks {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px dashed var(--line);
+    }
+
+    .subtask-item {
+      padding: 12px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .subtask-item.done {
+      background: rgba(34,197,94,0.08);
+      border-color: rgba(34,197,94,0.16);
+    }
+
+    .mini {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .timeline-flag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .gantt-wrap {
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+    }
+
+    .gantt { min-width: 1180px; }
+
+    .gantt-header, .gantt-row {
+      display: grid;
+      grid-template-columns: 320px repeat(31, minmax(36px, 1fr));
+    }
+
+    .gantt-header > div,
+    .gantt-row > div {
+      min-height: 42px;
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      position: relative;
+    }
+
+    .gantt-header > div:first-child,
+    .gantt-row > div:first-child {
+      position: sticky;
+      left: 0;
+      z-index: 2;
+      justify-content: flex-start;
+      padding: 0 12px;
+      background: #121a2f;
+    }
+
+    .gantt-header > div {
+      position: sticky;
+      top: 0;
+      z-index: 3;
+      background: #17213d;
+      font-weight: 800;
+    }
+
+    .gantt-project {
+      color: var(--muted);
+      font-size: 11px;
+      display: block;
+      margin-top: 4px;
+    }
+
+    .gantt-bar-cell { background: rgba(255,255,255,0.02); }
+    .gantt-bar-cell.fill-high { background: rgba(239,68,68,0.30); }
+    .gantt-bar-cell.fill-medium { background: rgba(245,158,11,0.26); }
+    .gantt-bar-cell.fill-low { background: rgba(34,197,94,0.22); }
+    .gantt-bar-cell.fill-sub { box-shadow: inset 0 0 0 2px rgba(96,165,250,0.35); }
+    .gantt-bar-cell.completed-overlay::after {
+      content: '✓';
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      font-size: 13px;
+      font-weight: 900;
+      color: rgba(255,255,255,0.95);
+    }
+
+    .legend {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .chart-bars {
+      display: grid;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .bar-item {
+      display: grid;
+      gap: 6px;
+    }
+
+    .bar-track {
+      width: 100%;
+      height: 10px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: rgba(255,255,255,0.06);
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--primary), var(--purple));
+    }
+
+    .smart-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .smart-tip {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px;
+      background: rgba(255,255,255,0.03);
+    }
+
+    .smart-tip h4 {
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    .smart-tip p {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .footer-note {
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+      padding: 20px 0 8px;
+    }
+
+    @media (max-width: 1120px) {
+      .app { grid-template-columns: 1fr; }
+      .sidebar {
+        position: relative;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--line);
+      }
+      .grid-4, .smart-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .grid-2, .grid-2-equal { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 760px) {
+      .main { padding: 16px; }
+      .grid-4, .form-grid, .smart-grid { grid-template-columns: 1fr; }
+      .gantt-header, .gantt-row { grid-template-columns: 260px repeat(31, minmax(34px, 1fr)); }
+      th:nth-child(4), td:nth-child(4), th:nth-child(7), td:nth-child(7) { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">MW</div>
+        <div>
+          <strong>My Personal Work Management System</strong>
+          <small>Modern dashboard, project tracking, done list, and gantt planner</small>
+        </div>
+      </div>
+
+      <div class="nav">
+        <button class="nav-btn active" data-page="dashboardPage">Overview Dashboard</button>
+        <button class="nav-btn" data-page="projectsPage">Projects & Tasks</button>
+        <button class="nav-btn" data-page="timelinePage">Project Timeline</button>
+        <button class="nav-btn" data-page="ganttPage">Gantt Chart</button>
+      </div>
+
+      <div class="sidebar-card">
+        <strong>Smart improvements added</strong>
+        <p>Completed work now moves to a dedicated done list instead of disappearing. Each completed task and subtask stores a completed date. The gantt chart also shows the project name for every task row for better clarity.</p>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="title-wrap">
+          <h1>My Personal Work Management System</h1>
+          <p>Manage projects, track active and completed work, monitor remaining days, and visualize progress with a cleaner smart modern UI.</p>
+        </div>
+        <div class="top-actions">
+          <button class="btn btn-secondary" id="seedDataBtn">Load Demo Data</button>
+          <button class="btn btn-secondary" id="exportBtn">Export Data</button>
+          <button class="btn btn-primary" id="clearBtn">Clear All</button>
+        </div>
+      </div>
+
+      <section id="dashboardPage" class="page active">
+        <div class="grid-4" id="statsGrid"></div>
+
+        <div class="grid-2">
+          <div class="card">
+            <div class="section-header">
+              <div>
+                <h2>Urgent Upcoming Work</h2>
+                <p>Sorted first by remaining days, then by priority.</p>
+              </div>
+            </div>
+            <div id="urgentList"></div>
+          </div>
+
+          <div class="card">
+            <div class="section-header">
+              <div>
+                <h2>Status Summary</h2>
+                <p>Overview of all active work currently in progress.</p>
+              </div>
+            </div>
+            <div id="statusSummary"></div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <div class="section-header">
+              <div>
+                <h2>Projects by Progress</h2>
+                <p>Progress is calculated from tasks and subtasks completed.</p>
+              </div>
+            </div>
+            <div id="projectProgress"></div>
+          </div>
+
+          <div class="card">
+            <div class="section-header">
+              <div>
+                <h2>People Workload</h2>
+                <p>Count of active assignments by person.</p>
+              </div>
+            </div>
+            <div id="peopleWorkload"></div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card soft">
+            <div class="section-header">
+              <div>
+                <h2>Recently Completed</h2>
+                <p>Latest completed tasks and subtasks with completed date.</p>
+              </div>
+            </div>
+            <div id="recentDoneList"></div>
+          </div>
+
+          <div class="card soft">
+            <div class="section-header">
+              <div>
+                <h2>Smart Suggestions</h2>
+                <p>Small modern improvements built into the system.</p>
+              </div>
+            </div>
+            <div class="smart-grid" id="smartTips"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="projectsPage" class="page">
+        <div class="grid-2">
+          <div class="card">
+            <div class="section-header">
+              <div>
+                <h2>Create New Project</h2>
+                <p>Add project name, assigned people, dates, and a short note.</p>
+              </div>
+            </div>
+            <form id="projectForm">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="projectName">Project Name</label>
+                  <input id="projectName" required placeholder="Enter project name" />
+                </div>
+                <div class="form-group">
+                  <label for="projectPeople">Assigned People</label>
+                  <input id="projectPeople" placeholder="Example: Thanuka, Amal, Nadee" />
+                </div>
+                <div class="form-group">
+                  <label for="projectStart">Start Date</label>
+                  <input id="projectStart" type="date" required />
+                </div>
+                <div class="form-group">
+                  <label for="projectEnd">End Date</label>
+                  <input id="projectEnd" type="date" required />
+                </div>
+                <div class="form-group full">
+                  <label for="projectDesc">Project Description</label>
+                  <textarea id="projectDesc" placeholder="Short project note"></textarea>
+                </div>
+                <div class="form-group full">
+                  <button class="btn btn-primary" type="submit">Add Project</button>
+                </div>
+              </div>
+            </form>
+          </div>
+
+          <div class="card">
+            <div class="section-header">
+              <div>
+                <h2>Create Task / Subtask</h2>
+                <p>Status and completed date tracking are included automatically.</p>
+              </div>
+            </div>
+            <form id="taskForm">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="taskProject">Project</label>
+                  <select id="taskProject" required></select>
+                </div>
+                <div class="form-group">
+                  <label for="taskParent">Parent Type</label>
+                  <select id="taskParent">
+                    <option value="task">Main Task</option>
+                    <option value="subtask">Subtask</option>
+                  </select>
+                </div>
+                <div class="form-group" id="parentTaskWrap" style="display:none;">
+                  <label for="parentTaskSelect">Parent Task</label>
+                  <select id="parentTaskSelect"></select>
+                </div>
+                <div class="form-group">
+                  <label for="taskTitle">Title</label>
+                  <input id="taskTitle" required placeholder="Task or subtask title" />
+                </div>
+                <div class="form-group">
+                  <label for="taskPeople">Assigned People</label>
+                  <input id="taskPeople" placeholder="Example: Thanuka, Amal" />
+                </div>
+                <div class="form-group">
+                  <label for="taskPriority">Priority</label>
+                  <select id="taskPriority">
+                    <option>High</option>
+                    <option selected>Medium</option>
+                    <option>Low</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="taskStatus">Status</label>
+                  <select id="taskStatus">
+                    <option>Plan to Start</option>
+                    <option selected>Ongoing</option>
+                    <option>Completed</option>
+                    <option>Cancel</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="taskStart">Start Date</label>
+                  <input id="taskStart" type="date" required />
+                </div>
+                <div class="form-group">
+                  <label for="taskEnd">End Date</label>
+                  <input id="taskEnd" type="date" required />
+                </div>
+                <div class="form-group full">
+                  <button class="btn btn-primary" type="submit">Add Task / Subtask</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="grid-2-equal">
+          <div class="card">
+            <div class="section-header">
+              <div>
+                <h2>Projects</h2>
+                <p>Select a project to view active and completed work separately.</p>
+              </div>
+            </div>
+            <div id="projectList" class="project-list"></div>
+          </div>
+
+          <div class="card">
+            <div class="section-header">
+              <div>
+                <h2>Selected Project Workspace</h2>
+                <p>Active work and done list are shown in separate sections.</p>
+              </div>
+              <div class="pill-toggle" id="projectViewToggle">
+                <button class="active" data-view="active">Active Work</button>
+                <button data-view="done">Done List</button>
+              </div>
+            </div>
+            <div id="selectedProjectContent"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="timelinePage" class="page">
+        <div class="card">
+          <div class="section-header">
+            <div>
+              <h2>Project Timeline</h2>
+              <p>Active items sorted by remaining days and priority, with one-click completion.</p>
+            </div>
+          </div>
+          <div class="toolbar">
+            <div class="left">
+              <input id="timelineSearch" placeholder="Search project, task, subtask, person..." />
+            </div>
+            <div class="right">
+              <select id="timelinePriorityFilter">
+                <option value="all">All Priorities</option>
+                <option value="High">High</option>
+                <option value="Medium">Medium</option>
+                <option value="Low">Low</option>
+              </select>
+              <select id="timelineStatusFilter">
+                <option value="all">All Active Status</option>
+                <option value="Plan to Start">Plan to Start</option>
+                <option value="Ongoing">Ongoing</option>
+                <option value="Cancel">Cancel</option>
+              </select>
+            </div>
+          </div>
+          <div style="overflow:auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Project</th>
+                  <th>Level</th>
+                  <th>Title</th>
+                  <th>Assigned</th>
+                  <th>Priority</th>
+                  <th>Status</th>
+                  <th>Start</th>
+                  <th>End</th>
+                  <th>Remaining Days</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="timelineTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="ganttPage" class="page">
+        <div class="card">
+          <div class="section-header">
+            <div>
+              <h2>Gantt Chart</h2>
+              <p>Current month visual view. Every row clearly shows the task and its project name.</p>
+            </div>
+          </div>
+          <div class="legend">
+            <span><i class="dot" style="background: rgba(239,68,68,0.8);"></i> High Priority</span>
+            <span><i class="dot" style="background: rgba(245,158,11,0.8);"></i> Medium Priority</span>
+            <span><i class="dot" style="background: rgba(34,197,94,0.8);"></i> Low Priority</span>
+            <span><i class="dot" style="background: rgba(96,165,250,0.8);"></i> Subtask Border</span>
+            <span><i class="dot" style="background: rgba(34,197,94,0.95);"></i> Completed Overlay</span>
+          </div>
+          <div class="gantt-wrap">
+            <div id="ganttContainer" class="gantt"></div>
+          </div>
+        </div>
+      </section>
+
+      <div class="footer-note">Single-file HTML • localStorage enabled • modern dashboard + done tracking + gantt project labeling</div>
+    </main>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'myPersonalWorkManagementSystem_v2';
+    const state = {
+      projects: loadData(),
+      selectedProjectId: null,
+      projectContentView: 'active'
+    };
+
+    const pageButtons = document.querySelectorAll('.nav-btn');
+    const pages = document.querySelectorAll('.page');
+
+    pageButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        pageButtons.forEach(b => b.classList.remove('active'));
+        pages.forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(btn.dataset.page).classList.add('active');
+        renderAll();
+      });
+    });
+
+    document.querySelectorAll('#projectViewToggle button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#projectViewToggle button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.projectContentView = btn.dataset.view;
+        renderSelectedProject();
+      });
+    });
+
+    function uid() {
+      return Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-4);
+    }
+
+    function loadData() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return [];
+        const parsed = JSON.parse(raw);
+        parsed.forEach(project => {
+          project.tasks = project.tasks || [];
+          project.tasks.forEach(task => {
+            task.subtasks = task.subtasks || [];
+            if (task.completedDate === undefined) task.completedDate = null;
+            task.subtasks.forEach(sub => {
+              if (sub.completedDate === undefined) sub.completedDate = null;
+            });
+          });
+        });
+        return parsed;
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveData() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state.projects));
+    }
+
+    function parsePeople(str) {
+      return (str || '')
+        .split(',')
+        .map(s => s.trim())
+        .filter(Boolean);
+    }
+
+    function dateOnly(date) {
+      return new Date(date + 'T00:00:00');
+    }
+
+    function todayStart() {
+      const now = new Date();
+      return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    }
+
+    function remainingDays(endDate) {
+      return Math.ceil((dateOnly(endDate) - todayStart()) / (1000 * 60 * 60 * 24));
+    }
+
+    function priorityScore(priority) {
+      return priority === 'High' ? 1 : priority === 'Medium' ? 2 : 3;
+    }
+
+    function isCompleted(status) {
+      return status === 'Completed';
+    }
+
+    function isActive(status) {
+      return status !== 'Completed';
+    }
+
+    function formatDate(d) {
+      if (!d) return '-';
+      const dt = new Date(d + 'T00:00:00');
+      return dt.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+    }
+
+    function todayISO() {
+      const d = new Date();
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`;
+    }
+
+    function statusClass(status) {
+      if (status === 'Plan to Start') return 'status-plan';
+      if (status === 'Ongoing') return 'status-ongoing';
+      if (status === 'Completed') return 'status-completed';
+      return 'status-cancel';
+    }
+
+    function priorityClass(priority) {
+      if (priority === 'High') return 'priority-high';
+      if (priority === 'Medium') return 'priority-medium';
+      return 'priority-low';
+    }
+
+    function getAllItems(includeCompleted = true) {
+      const items = [];
+      state.projects.forEach(project => {
+        project.tasks.forEach(task => {
+          if (includeCompleted || isActive(task.status)) {
+            items.push({
+              id: task.id,
+              level: 'Task',
+              projectId: project.id,
+              projectName: project.name,
+              parentTaskId: null,
+              title: task.title,
+              assignedPeople: task.assignedPeople,
+              priority: task.priority,
+              status: task.status,
+              startDate: task.startDate,
+              endDate: task.endDate,
+              completedDate: task.completedDate || null,
+              remaining: remainingDays(task.endDate)
+            });
+          }
+          task.subtasks.forEach(subtask => {
+            if (includeCompleted || isActive(subtask.status)) {
+              items.push({
+                id: subtask.id,
+                level: 'Subtask',
+                projectId: project.id,
+                projectName: project.name,
+                parentTaskId: task.id,
+                title: subtask.title,
+                assignedPeople: subtask.assignedPeople,
+                priority: subtask.priority,
+                status: subtask.status,
+                startDate: subtask.startDate,
+                endDate: subtask.endDate,
+                completedDate: subtask.completedDate || null,
+                remaining: remainingDays(subtask.endDate)
+              });
+            }
+          });
+        });
+      });
+      return items;
+    }
+
+    function getAllActiveItems() {
+      return getAllItems(false).sort((a, b) => {
+        if (a.remaining !== b.remaining) return a.remaining - b.remaining;
+        if (priorityScore(a.priority) !== priorityScore(b.priority)) return priorityScore(a.priority) - priorityScore(b.priority);
+        return new Date(a.endDate) - new Date(b.endDate);
+      });
+    }
+
+    function getAllDoneItems() {
+      return getAllItems(true)
+        .filter(item => item.status === 'Completed')
+        .sort((a, b) => new Date(b.completedDate || b.endDate) - new Date(a.completedDate || a.endDate));
+    }
+
+    function getProjectProgress(project) {
+      const main = project.tasks.length;
+      const subs = project.tasks.reduce((sum, t) => sum + t.subtasks.length, 0);
+      const total = main + subs;
+      if (total === 0) return 0;
+      const completedTasks = project.tasks.filter(t => t.status === 'Completed').length;
+      const completedSubs = project.tasks.reduce((sum, t) => sum + t.subtasks.filter(s => s.status === 'Completed').length, 0);
+      return Math.round(((completedTasks + completedSubs) / total) * 100);
+    }
+
+    function projectRemaining(project) {
+      return remainingDays(project.endDate);
+    }
+
+    function renderStats() {
+      const allTasks = state.projects.flatMap(p => p.tasks);
+      const allSubtasks = allTasks.flatMap(t => t.subtasks);
+      const activeTasks = allTasks.filter(t => isActive(t.status));
+      const activeSubs = allSubtasks.filter(s => isActive(s.status));
+      const doneCount = [...allTasks, ...allSubtasks].filter(i => i.status === 'Completed').length;
+      const overdue = [...activeTasks, ...activeSubs].filter(i => remainingDays(i.endDate) < 0).length;
+
+      const stats = [
+        { label: 'Total Projects', value: state.projects.length, hint: 'All created projects stored locally' },
+        { label: 'Active Tasks', value: activeTasks.length, hint: 'Visible in active workspace and timeline' },
+        { label: 'Done Items', value: doneCount, hint: 'Tasks and subtasks kept in done list' },
+        { label: 'Overdue Items', value: overdue, hint: 'Active items with negative remaining days' }
+      ];
+
+      document.getElementById('statsGrid').innerHTML = stats.map(stat => `
+        <div class="card stat-card">
+          <h3>${stat.label}</h3>
+          <div class="stat-value">${stat.value}</div>
+          <div class="stat-hint">${stat.hint}</div>
+        </div>
+      `).join('');
+    }
+
+    function renderUrgentList() {
+      const items = getAllActiveItems().slice(0, 8);
+      const el = document.getElementById('urgentList');
+      if (!items.length) {
+        el.innerHTML = '<div class="empty">No active tasks or subtasks yet.</div>';
+        return;
+      }
+      el.innerHTML = `<div class="task-stack">${items.map(item => `
+        <div class="task-card">
+          <div class="task-top">
+            <div>
+              <strong>${item.title}</strong>
+              <div class="mini" style="margin-top:6px;">${item.projectName} • ${item.level}</div>
+            </div>
+            <div class="chip-list">
+              <span class="badge ${priorityClass(item.priority)}">${item.priority}</span>
+              <span class="badge ${statusClass(item.status)}">${item.status}</span>
+            </div>
+          </div>
+          <div class="mini">Assigned: ${(item.assignedPeople || []).join(', ') || 'Unassigned'}</div>
+          <div class="mini" style="margin-top:6px;">End: ${formatDate(item.endDate)} • Remaining: <strong>${item.remaining}</strong> day(s)</div>
+        </div>
+      `).join('')}</div>`;
+    }
+
+    function renderStatusSummary() {
+      const items = getAllActiveItems();
+      const map = {
+        'Plan to Start': items.filter(i => i.status === 'Plan to Start').length,
+        'Ongoing': items.filter(i => i.status === 'Ongoing').length,
+        'Cancel': items.filter(i => i.status === 'Cancel').length
+      };
+      const total = Math.max(1, items.length);
+      document.getElementById('statusSummary').innerHTML = `
+        <div class="chart-bars">
+          ${Object.entries(map).map(([key, value]) => `
+            <div class="bar-item">
+              <div style="display:flex;justify-content:space-between;gap:12px;">
+                <span>${key}</span>
+                <strong>${value}</strong>
+              </div>
+              <div class="bar-track"><div class="bar-fill" style="width:${(value / total) * 100}%"></div></div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    function renderProjectProgress() {
+      const el = document.getElementById('projectProgress');
+      if (!state.projects.length) {
+        el.innerHTML = '<div class="empty">No projects available.</div>';
+        return;
+      }
+      el.innerHTML = `<div class="chart-bars">${state.projects.map(project => {
+        const progress = getProjectProgress(project);
+        return `
+          <div class="bar-item">
+            <div style="display:flex;justify-content:space-between;gap:12px;">
+              <span>${project.name}</span>
+              <strong>${progress}%</strong>
+            </div>
+            <div class="bar-track"><div class="bar-fill" style="width:${progress}%"></div></div>
+          </div>
+        `;
+      }).join('')}</div>`;
+    }
+
+    function renderPeopleWorkload() {
+      const counts = {};
+      getAllActiveItems().forEach(item => {
+        (item.assignedPeople || []).forEach(person => {
+          counts[person] = (counts[person] || 0) + 1;
+        });
+      });
+      const entries = Object.entries(counts).sort((a,b) => b[1]-a[1]);
+      const el = document.getElementById('peopleWorkload');
+      if (!entries.length) {
+        el.innerHTML = '<div class="empty">No people assigned yet.</div>';
+        return;
+      }
+      const max = entries[0][1] || 1;
+      el.innerHTML = `<div class="chart-bars">${entries.map(([person, count]) => `
+        <div class="bar-item">
+          <div style="display:flex;justify-content:space-between;gap:12px;">
+            <span>${person}</span>
+            <strong>${count}</strong>
+          </div>
+          <div class="bar-track"><div class="bar-fill" style="width:${(count / max) * 100}%"></div></div>
+        </div>
+      `).join('')}</div>`;
+    }
+
+    function renderRecentDone() {
+      const items = getAllDoneItems().slice(0, 6);
+      const el = document.getElementById('recentDoneList');
+      if (!items.length) {
+        el.innerHTML = '<div class="empty">No completed items yet.</div>';
+        return;
+      }
+      el.innerHTML = `<div class="done-stack">${items.map(item => `
+        <div class="done-card">
+          <div class="task-top">
+            <div>
+              <strong>${item.title}</strong>
+              <div class="mini" style="margin-top:6px;">${item.projectName} • ${item.level}</div>
+            </div>
+            <span class="badge status-completed">Completed</span>
+          </div>
+          <div class="mini">Completed Date: <strong>${formatDate(item.completedDate)}</strong></div>
+        </div>
+      `).join('')}</div>`;
+    }
+
+    function renderSmartTips() {
+      const tips = [
+        { title: 'Dedicated Done List', text: 'Completed tasks stay visible in a separate done section, so you never lose history.' },
+        { title: 'Completion Date Tracking', text: 'Whenever a task or subtask is marked completed, the system saves the exact completed date.' },
+        { title: 'Clearer Gantt Rows', text: 'Each gantt row now shows both the task title and project name for faster scanning.' },
+        { title: 'Dual Project Workspace', text: 'Inside each project you can switch between active work and done list using a clean toggle.' },
+        { title: 'Smarter Visual Hierarchy', text: 'Completed items use a softer green state, while urgent work stays easy to spot.' },
+        { title: 'Local Save Ready', text: 'Everything is still stored in the browser, so the app works instantly without a backend.' }
+      ];
+      document.getElementById('smartTips').innerHTML = tips.map(t => `
+        <div class="smart-tip">
+          <h4>${t.title}</h4>
+          <p>${t.text}</p>
+        </div>
+      `).join('');
+    }
+
+    function renderProjectOptions() {
+      const projectSelect = document.getElementById('taskProject');
+      if (!state.projects.length) {
+        projectSelect.innerHTML = '<option value="">No projects available</option>';
+        document.getElementById('parentTaskSelect').innerHTML = '<option value="">No tasks available</option>';
+        return;
+      }
+      projectSelect.innerHTML = state.projects.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+      if (!state.selectedProjectId || !state.projects.find(p => p.id === state.selectedProjectId)) {
+        state.selectedProjectId = state.projects[0].id;
+      }
+      projectSelect.value = state.selectedProjectId;
+      renderParentTaskOptions();
+    }
+
+    function renderParentTaskOptions() {
+      const projectId = document.getElementById('taskProject').value;
+      const project = state.projects.find(p => p.id === projectId);
+      const select = document.getElementById('parentTaskSelect');
+      if (!project) {
+        select.innerHTML = '<option value="">No tasks available</option>';
+        return;
+      }
+      const taskList = project.tasks;
+      select.innerHTML = taskList.length
+        ? taskList.map(task => `<option value="${task.id}">${task.title}</option>`).join('')
+        : '<option value="">No tasks available</option>';
+    }
+
+    function renderProjectsList() {
+      const el = document.getElementById('projectList');
+      if (!state.projects.length) {
+        el.innerHTML = '<div class="empty">No projects created yet.</div>';
+        return;
+      }
+      const sorted = [...state.projects].sort((a,b) => projectRemaining(a) - projectRemaining(b));
+      el.innerHTML = sorted.map(project => `
+        <div class="project-item ${project.id === state.selectedProjectId ? 'active' : ''}" data-project-id="${project.id}">
+          <strong>${project.name}</strong>
+          <div class="project-meta">
+            <span>Start: ${formatDate(project.startDate)}</span>
+            <span>End: ${formatDate(project.endDate)}</span>
+            <span>Remain: ${projectRemaining(project)} day(s)</span>
+          </div>
+          <div class="project-meta" style="margin-top:8px;">
+            <span>${project.tasks.length} task(s)</span>
+            <span>${getProjectProgress(project)}% progress</span>
+          </div>
+          <div class="chip-list" style="margin-top:10px;">
+            ${(project.assignedPeople || []).map(p => `<span class="chip">${p}</span>`).join('') || '<span class="chip">No people assigned</span>'}
+          </div>
+        </div>
+      `).join('');
+
+      document.querySelectorAll('.project-item').forEach(item => {
+        item.addEventListener('click', () => {
+          state.selectedProjectId = item.dataset.projectId;
+          renderProjectsList();
+          renderSelectedProject();
+        });
+      });
+    }
+
+    function renderSelectedProject() {
+      const project = state.projects.find(p => p.id === state.selectedProjectId);
+      const el = document.getElementById('selectedProjectContent');
+      if (!project) {
+        el.innerHTML = '<div class="empty">Select a project to view details.</div>';
+        return;
+      }
+
+      if (state.projectContentView === 'active') {
+        const activeTasks = project.tasks.filter(t => isActive(t.status)).sort((a,b) => {
+          if (remainingDays(a.endDate) !== remainingDays(b.endDate)) return remainingDays(a.endDate) - remainingDays(b.endDate);
+          return priorityScore(a.priority) - priorityScore(b.priority);
+        });
+
+        if (!activeTasks.length) {
+          el.innerHTML = '<div class="empty">No active tasks in this project.</div>';
+          return;
+        }
+
+        el.innerHTML = `<div class="task-stack">${activeTasks.map(task => `
+          <div class="task-card">
+            <div class="task-top">
+              <div>
+                <strong>${task.title}</strong>
+                <div class="mini" style="margin-top:6px;">${formatDate(task.startDate)} → ${formatDate(task.endDate)} • Remaining ${remainingDays(task.endDate)} day(s)</div>
+              </div>
+              <div class="chip-list">
+                <span class="badge ${priorityClass(task.priority)}">${task.priority}</span>
+                <span class="badge ${statusClass(task.status)}">${task.status}</span>
+              </div>
+            </div>
+            <div class="mini">Assigned: ${(task.assignedPeople || []).join(', ') || 'Unassigned'}</div>
+            <div class="actions" style="margin-top:12px;">
+              <button class="icon-btn" onclick="quickStatus('${project.id}','${task.id}',null,'Plan to Start')">Plan</button>
+              <button class="icon-btn" onclick="quickStatus('${project.id}','${task.id}',null,'Ongoing')">Ongoing</button>
+              <button class="icon-btn" onclick="quickStatus('${project.id}','${task.id}',null,'Completed')">Complete</button>
+              <button class="icon-btn" onclick="quickStatus('${project.id}','${task.id}',null,'Cancel')">Cancel</button>
+              <button class="icon-btn" onclick="deleteTask('${project.id}','${task.id}',null)">Delete</button>
+            </div>
+            ${task.subtasks.filter(s => isActive(s.status)).length ? `
+              <div class="task-subtasks">
+                ${task.subtasks.filter(s => isActive(s.status)).sort((a,b) => {
+                  if (remainingDays(a.endDate) !== remainingDays(b.endDate)) return remainingDays(a.endDate) - remainingDays(b.endDate);
+                  return priorityScore(a.priority) - priorityScore(b.priority);
+                }).map(sub => `
+                  <div class="subtask-item">
+                    <div>
+                      <strong>${sub.title}</strong>
+                      <div class="mini" style="margin-top:6px;">${formatDate(sub.startDate)} → ${formatDate(sub.endDate)} • Remaining ${remainingDays(sub.endDate)} day(s)</div>
+                      <div class="mini" style="margin-top:6px;">Assigned: ${(sub.assignedPeople || []).join(', ') || 'Unassigned'}</div>
+                    </div>
+                    <div>
+                      <div class="chip-list" style="justify-content:flex-end;">
+                        <span class="badge ${priorityClass(sub.priority)}">${sub.priority}</span>
+                        <span class="badge ${statusClass(sub.status)}">${sub.status}</span>
+                      </div>
+                      <div class="actions" style="margin-top:12px; justify-content:flex-end;">
+                        <button class="icon-btn" onclick="quickStatus('${project.id}','${task.id}','${sub.id}','Plan to Start')">Plan</button>
+                        <button class="icon-btn" onclick="quickStatus('${project.id}','${task.id}','${sub.id}','Ongoing')">Ongoing</button>
+                        <button class="icon-btn" onclick="quickStatus('${project.id}','${task.id}','${sub.id}','Completed')">Complete</button>
+                        <button class="icon-btn" onclick="quickStatus('${project.id}','${task.id}','${sub.id}','Cancel')">Cancel</button>
+                        <button class="icon-btn" onclick="deleteTask('${project.id}','${task.id}','${sub.id}')">Delete</button>
+                      </div>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            ` : '<div class="mini" style="margin-top:12px;">No active subtasks.</div>'}
+          </div>
+        `).join('')}</div>`;
+      } else {
+        const doneTasks = project.tasks.filter(t => isCompleted(t.status) || t.subtasks.some(s => isCompleted(s.status)));
+        if (!doneTasks.length) {
+          el.innerHTML = '<div class="empty">No completed tasks or subtasks in this project yet.</div>';
+          return;
+        }
+
+        el.innerHTML = `<div class="done-stack">${doneTasks.map(task => {
+          const taskDone = isCompleted(task.status);
+          const doneSubs = task.subtasks.filter(s => isCompleted(s.status));
+          return `
+            <div class="done-card">
+              <div class="task-top">
+                <div>
+                  <strong>${task.title}</strong>
+                  <div class="mini" style="margin-top:6px;">${formatDate(task.startDate)} → ${formatDate(task.endDate)}</div>
+                </div>
+                <div class="chip-list">
+                  ${taskDone ? `<span class="badge status-completed">Completed</span>` : `<span class="badge ${statusClass(task.status)}">${task.status}</span>`}
+                </div>
+              </div>
+              <div class="mini">Assigned: ${(task.assignedPeople || []).join(', ') || 'Unassigned'}</div>
+              <div class="mini" style="margin-top:6px;">Completed Date: <strong>${formatDate(task.completedDate)}</strong></div>
+              ${doneSubs.length ? `
+                <div class="task-subtasks">
+                  ${doneSubs.map(sub => `
+                    <div class="subtask-item done">
+                      <div>
+                        <strong>${sub.title}</strong>
+                        <div class="mini" style="margin-top:6px;">Assigned: ${(sub.assignedPeople || []).join(', ') || 'Unassigned'}</div>
+                        <div class="mini" style="margin-top:6px;">Completed Date: <strong>${formatDate(sub.completedDate)}</strong></div>
+                      </div>
+                      <div class="chip-list">
+                        <span class="badge ${priorityClass(sub.priority)}">${sub.priority}</span>
+                        <span class="badge status-completed">Completed</span>
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+              ` : ''}
+            </div>
+          `;
+        }).join('')}</div>`;
+      }
+    }
+
+    function renderTimeline() {
+      const search = (document.getElementById('timelineSearch').value || '').toLowerCase().trim();
+      const priorityFilter = document.getElementById('timelinePriorityFilter').value;
+      const statusFilter = document.getElementById('timelineStatusFilter').value;
+
+      let items = getAllActiveItems();
+      items = items.filter(item => {
+        const matchesSearch = !search || [item.projectName, item.title, item.level, ...(item.assignedPeople || [])].join(' ').toLowerCase().includes(search);
+        const matchesPriority = priorityFilter === 'all' || item.priority === priorityFilter;
+        const matchesStatus = statusFilter === 'all' || item.status === statusFilter;
+        return matchesSearch && matchesPriority && matchesStatus;
+      });
+
+      const el = document.getElementById('timelineTable');
+      if (!items.length) {
+        el.innerHTML = '<tr><td colspan="10"><div class="empty">No matching active timeline items found.</div></td></tr>';
+        return;
+      }
+
+      el.innerHTML = items.map(item => `
+        <tr>
+          <td>${item.projectName}</td>
+          <td>${item.level}</td>
+          <td><strong>${item.title}</strong></td>
+          <td>${(item.assignedPeople || []).join(', ') || 'Unassigned'}</td>
+          <td><span class="badge ${priorityClass(item.priority)}">${item.priority}</span></td>
+          <td><span class="badge ${statusClass(item.status)}">${item.status}</span></td>
+          <td>${formatDate(item.startDate)}</td>
+          <td>${formatDate(item.endDate)}</td>
+          <td>${item.remaining}</td>
+          <td>
+            <div class="actions">
+              <button class="icon-btn" onclick="markTimelineComplete('${item.projectId}','${item.parentTaskId || item.id}','${item.level === 'Subtask' ? item.id : ''}')">Complete</button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function renderGantt() {
+      const el = document.getElementById('ganttContainer');
+      const items = getAllItems(true);
+      if (!items.length) {
+        el.innerHTML = '<div class="empty" style="margin:16px;">No tasks or subtasks to display in the gantt chart.</div>';
+        return;
+      }
+
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = now.getMonth();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const monthStart = new Date(year, month, 1);
+      const monthEnd = new Date(year, month, daysInMonth);
+
+      const header = ['<div>Task / Project</div>'];
+      for (let d = 1; d <= 31; d++) {
+        header.push(`<div>${d <= daysInMonth ? d : ''}</div>`);
+      }
+
+      const sorted = [...items].sort((a,b) => {
+        if (a.projectName !== b.projectName) return a.projectName.localeCompare(b.projectName);
+        return new Date(a.startDate) - new Date(b.startDate);
+      });
+
+      const rows = sorted.map(item => {
+        const start = dateOnly(item.startDate);
+        const end = dateOnly(item.endDate);
+        const cells = [`<div><div><strong>${item.title}</strong><span class="gantt-project">${item.projectName} • ${item.level}</span></div></div>`];
+
+        for (let d = 1; d <= 31; d++) {
+          if (d > daysInMonth) {
+            cells.push('<div></div>');
+            continue;
+          }
+          const cellDate = new Date(year, month, d);
+          const inside = cellDate >= start && cellDate <= end && end >= monthStart && start <= monthEnd;
+          let cls = 'gantt-bar-cell';
+          if (inside) {
+            cls += item.priority === 'High' ? ' fill-high' : item.priority === 'Medium' ? ' fill-medium' : ' fill-low';
+            if (item.level === 'Subtask') cls += ' fill-sub';
+            if (item.status === 'Completed') cls += ' completed-overlay';
+          }
+          cells.push(`<div class="${cls}" title="${item.projectName} | ${item.title} | ${item.status}"></div>`);
+        }
+        return `<div class="gantt-row">${cells.join('')}</div>`;
+      }).join('');
+
+      el.innerHTML = `<div class="gantt-header">${header.join('')}</div>${rows}`;
+    }
+
+    function renderAll() {
+      saveData();
+      renderStats();
+      renderUrgentList();
+      renderStatusSummary();
+      renderProjectProgress();
+      renderPeopleWorkload();
+      renderRecentDone();
+      renderSmartTips();
+      renderProjectOptions();
+      renderProjectsList();
+      renderSelectedProject();
+      renderTimeline();
+      renderGantt();
+    }
+
+    document.getElementById('projectForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('projectName').value.trim();
+      const assignedPeople = parsePeople(document.getElementById('projectPeople').value);
+      const startDate = document.getElementById('projectStart').value;
+      const endDate = document.getElementById('projectEnd').value;
+      const description = document.getElementById('projectDesc').value.trim();
+
+      if (!name || !startDate || !endDate) return;
+      if (dateOnly(endDate) < dateOnly(startDate)) {
+        alert('Project end date cannot be earlier than start date.');
+        return;
+      }
+
+      const project = {
+        id: uid(),
+        name,
+        assignedPeople,
+        startDate,
+        endDate,
+        description,
+        tasks: []
+      };
+
+      state.projects.unshift(project);
+      state.selectedProjectId = project.id;
+      e.target.reset();
+      renderAll();
+    });
+
+    document.getElementById('taskParent').addEventListener('change', (e) => {
+      document.getElementById('parentTaskWrap').style.display = e.target.value === 'subtask' ? 'grid' : 'none';
+      renderParentTaskOptions();
+    });
+
+    document.getElementById('taskProject').addEventListener('change', (e) => {
+      state.selectedProjectId = e.target.value;
+      renderParentTaskOptions();
+      renderProjectsList();
+      renderSelectedProject();
+    });
+
+    document.getElementById('taskForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const projectId = document.getElementById('taskProject').value;
+      const parentType = document.getElementById('taskParent').value;
+      const title = document.getElementById('taskTitle').value.trim();
+      const assignedPeople = parsePeople(document.getElementById('taskPeople').value);
+      const priority = document.getElementById('taskPriority').value;
+      const status = document.getElementById('taskStatus').value;
+      const startDate = document.getElementById('taskStart').value;
+      const endDate = document.getElementById('taskEnd').value;
+      const completedDate = status === 'Completed' ? todayISO() : null;
+
+      const project = state.projects.find(p => p.id === projectId);
+      if (!project) return;
+      if (dateOnly(endDate) < dateOnly(startDate)) {
+        alert('Task end date cannot be earlier than start date.');
+        return;
+      }
+      if (dateOnly(startDate) < dateOnly(project.startDate) || dateOnly(endDate) > dateOnly(project.endDate)) {
+        alert('Task dates should stay within the selected project date range.');
+        return;
+      }
+
+      if (parentType === 'task') {
+        project.tasks.push({
+          id: uid(),
+          title,
+          assignedPeople,
+          priority,
+          status,
+          startDate,
+          endDate,
+          completedDate,
+          subtasks: []
+        });
+      } else {
+        const parentTaskId = document.getElementById('parentTaskSelect').value;
+        const task = project.tasks.find(t => t.id === parentTaskId);
+        if (!task) {
+          alert('Please create a main task first.');
+          return;
+        }
+        if (dateOnly(startDate) < dateOnly(task.startDate) || dateOnly(endDate) > dateOnly(task.endDate)) {
+          alert('Subtask dates should stay within the parent task date range.');
+          return;
+        }
+        task.subtasks.push({
+          id: uid(),
+          title,
+          assignedPeople,
+          priority,
+          status,
+          startDate,
+          endDate,
+          completedDate
+        });
+      }
+
+      e.target.reset();
+      document.getElementById('taskStatus').value = 'Ongoing';
+      document.getElementById('taskPriority').value = 'Medium';
+      document.getElementById('taskParent').value = 'task';
+      document.getElementById('parentTaskWrap').style.display = 'none';
+      renderAll();
+    });
+
+    function updateCompletionMeta(item, status) {
+      item.status = status;
+      if (status === 'Completed') {
+        item.completedDate = todayISO();
+      } else {
+        item.completedDate = null;
+      }
+    }
+
+    function quickStatus(projectId, taskId, subtaskId, status) {
+      const project = state.projects.find(p => p.id === projectId);
+      if (!project) return;
+      const task = project.tasks.find(t => t.id === taskId);
+      if (!task) return;
+
+      if (subtaskId) {
+        const subtask = task.subtasks.find(s => s.id === subtaskId);
+        if (!subtask) return;
+        updateCompletionMeta(subtask, status);
+      } else {
+        updateCompletionMeta(task, status);
+      }
+      renderAll();
+    }
+
+    function deleteTask(projectId, taskId, subtaskId) {
+      const project = state.projects.find(p => p.id === projectId);
+      if (!project) return;
+      const task = project.tasks.find(t => t.id === taskId);
+      if (!task) return;
+      if (subtaskId) {
+        task.subtasks = task.subtasks.filter(s => s.id !== subtaskId);
+      } else {
+        project.tasks = project.tasks.filter(t => t.id !== taskId);
+      }
+      renderAll();
+    }
+
+    function markTimelineComplete(projectId, taskId, subtaskId) {
+      quickStatus(projectId, taskId, subtaskId || null, 'Completed');
+    }
+
+    window.quickStatus = quickStatus;
+    window.deleteTask = deleteTask;
+    window.markTimelineComplete = markTimelineComplete;
+
+    document.getElementById('timelineSearch').addEventListener('input', renderTimeline);
+    document.getElementById('timelinePriorityFilter').addEventListener('change', renderTimeline);
+    document.getElementById('timelineStatusFilter').addEventListener('change', renderTimeline);
+
+    document.getElementById('clearBtn').addEventListener('click', () => {
+      if (!confirm('Delete all projects, tasks, subtasks, and done history?')) return;
+      state.projects = [];
+      state.selectedProjectId = null;
+      renderAll();
+    });
+
+    document.getElementById('exportBtn').addEventListener('click', () => {
+      const blob = new Blob([JSON.stringify(state.projects, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'my-personal-work-management-system-data.json';
+      a.click();
+      URL.revokeObjectURL(a.href);
+    });
+
+    document.getElementById('seedDataBtn').addEventListener('click', () => {
+      state.projects = demoData();
+      state.selectedProjectId = state.projects[0]?.id || null;
+      state.projectContentView = 'active';
+      document.querySelectorAll('#projectViewToggle button').forEach(b => b.classList.remove('active'));
+      document.querySelector('#projectViewToggle button[data-view="active"]').classList.add('active');
+      renderAll();
+    });
+
+    function demoData() {
+      return [
+        {
+          id: uid(),
+          name: 'Website Redesign',
+          assignedPeople: ['Thanuka', 'Amal', 'Nadee'],
+          startDate: getRelativeDate(-4),
+          endDate: getRelativeDate(25),
+          description: 'Modern redesign of the company website.',
+          tasks: [
+            {
+              id: uid(),
+              title: 'Wireframe Main Pages',
+              assignedPeople: ['Thanuka'],
+              priority: 'High',
+              status: 'Ongoing',
+              startDate: getRelativeDate(-3),
+              endDate: getRelativeDate(4),
+              completedDate: null,
+              subtasks: [
+                { id: uid(), title: 'Homepage Layout', assignedPeople: ['Thanuka'], priority: 'High', status: 'Ongoing', startDate: getRelativeDate(-3), endDate: getRelativeDate(1), completedDate: null },
+                { id: uid(), title: 'Product Page Layout', assignedPeople: ['Amal'], priority: 'Medium', status: 'Plan to Start', startDate: getRelativeDate(1), endDate: getRelativeDate(4), completedDate: null },
+                { id: uid(), title: 'Footer Layout', assignedPeople: ['Nadee'], priority: 'Low', status: 'Completed', startDate: getRelativeDate(-4), endDate: getRelativeDate(-2), completedDate: getRelativeDate(-1) }
+              ]
+            },
+            {
+              id: uid(),
+              title: 'Collect Brand Assets',
+              assignedPeople: ['Nadee'],
+              priority: 'Medium',
+              status: 'Plan to Start',
+              startDate: getRelativeDate(2),
+              endDate: getRelativeDate(7),
+              completedDate: null,
+              subtasks: []
+            },
+            {
+              id: uid(),
+              title: 'Old Banner Cleanup',
+              assignedPeople: ['Amal'],
+              priority: 'Low',
+              status: 'Completed',
+              startDate: getRelativeDate(-8),
+              endDate: getRelativeDate(-2),
+              completedDate: getRelativeDate(-1),
+              subtasks: []
+            }
+          ]
+        },
+        {
+          id: uid(),
+          name: 'Marketing Campaign',
+          assignedPeople: ['Shenal', 'Thanuka'],
+          startDate: getRelativeDate(-1),
+          endDate: getRelativeDate(18),
+          description: 'Launch campaign assets and scheduling.',
+          tasks: [
+            {
+              id: uid(),
+              title: 'Ad Copy Variations',
+              assignedPeople: ['Shenal'],
+              priority: 'High',
+              status: 'Ongoing',
+              startDate: getRelativeDate(0),
+              endDate: getRelativeDate(5),
+              completedDate: null,
+              subtasks: [
+                { id: uid(), title: 'Headline Testing', assignedPeople: ['Shenal'], priority: 'High', status: 'Ongoing', startDate: getRelativeDate(0), endDate: getRelativeDate(2), completedDate: null },
+                { id: uid(), title: 'CTA Testing', assignedPeople: ['Thanuka'], priority: 'Medium', status: 'Completed', startDate: getRelativeDate(-1), endDate: getRelativeDate(1), completedDate: getRelativeDate(0) }
+              ]
+            },
+            {
+              id: uid(),
+              title: 'Video Edit Delivery',
+              assignedPeople: ['Thanuka'],
+              priority: 'High',
+              status: 'Plan to Start',
+              startDate: getRelativeDate(4),
+              endDate: getRelativeDate(10),
+              completedDate: null,
+              subtasks: []
+            }
+          ]
+        }
+      ];
+    }
+
+    function getRelativeDate(offset) {
+      const d = new Date();
+      d.setDate(d.getDate() + offset);
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`;
+    }
+
+    if (state.projects.length && !state.selectedProjectId) {
+      state.selectedProjectId = state.projects[0].id;
+    }
+
+    renderAll();
+  </script>
+</body>
+</html>
